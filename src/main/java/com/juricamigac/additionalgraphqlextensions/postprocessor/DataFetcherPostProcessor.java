@@ -21,7 +21,6 @@ import java.util.Set;
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@DependsOn(value = "graphQLService")
 @Component
 public class DataFetcherPostProcessor {
 
@@ -36,16 +35,16 @@ public class DataFetcherPostProcessor {
         RuntimeWiring RUNTIME_WIRING = RuntimeWiring.MOCKED_WIRING;
         final Set<Class<?>> dataFetcherAnnotation = this.reflectionResolverService.getBeansWithDataFetcherAnnotations();
         final Set<DataFetcherBean> dataFetcherBeans = this.reflectionResolverService.getDataFetcherBeans(dataFetcherAnnotation);
-        final Set<Field> fields = this.reflectionResolverService.getFieldsAnnotatedWithRuntimeWiring();
+        final Set<Field> runtimeWiringFields = this.reflectionResolverService.getFieldsAnnotatedWithRuntimeWiring();
         final Set<Field> graphQlObjects = this.reflectionResolverService.getFieldsAnnotatedWithGraphQlObject();
-        if (!fields.isEmpty() && !dataFetcherBeans.isEmpty()) {
+        if (!dataFetcherBeans.isEmpty()) {
             RuntimeWiring.Builder runtimeBuilder = RuntimeWiring.newRuntimeWiring();
             for (DataFetcherBean bean : dataFetcherBeans) {
                 final DataFetcher dt = Optional.of((DataFetcher) beanFactory.getBean(bean.getDataFetcherClass())).orElse(null);
                 runtimeBuilder.type(this.getCapitalizedGraphQLOperation(bean), b -> b.dataFetcher(bean.getDataFetcherAnnotation().operationName(), dt));
             }
             RUNTIME_WIRING = runtimeBuilder.build();
-            this.reflectionResolverService.setRuntimeWiringToAnnotationFields(fields, RUNTIME_WIRING);
+            this.reflectionResolverService.setRuntimeWiringToAnnotationFields(runtimeWiringFields, RUNTIME_WIRING);
             this.reflectionResolverService.setGraphQlObject(graphQlObjects, RUNTIME_WIRING);
         }
     }
