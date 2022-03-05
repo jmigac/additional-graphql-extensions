@@ -1,34 +1,28 @@
 package com.juricamigac.additionalgraphqlextensions.postprocessor.service;
 
 import com.juricamigac.additionalgraphqlextensions.annotations.DataFetcherQL;
+import com.juricamigac.additionalgraphqlextensions.annotations.GQL;
 import com.juricamigac.additionalgraphqlextensions.annotations.GraphqlObject;
 import com.juricamigac.additionalgraphqlextensions.annotations.RuntimeWiringQL;
 import com.juricamigac.additionalgraphqlextensions.beans.DataFetcherBean;
 import com.juricamigac.additionalgraphqlextensions.beans.GraphqlBean;
-import com.juricamigac.additionalgraphqlextensions.beans.impl.GraphqlClasspathBeanImpl;
-import com.juricamigac.additionalgraphqlextensions.beans.impl.GraphqlRawStringBeanImpl;
-import com.juricamigac.additionalgraphqlextensions.enums.GraphqlObjectEnum;
 import graphql.GraphQL;
 import graphql.schema.idl.RuntimeWiring;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.FieldAnnotationsScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections8.Reflections;
+import org.reflections8.scanners.FieldAnnotationsScanner;
+import org.reflections8.scanners.SubTypesScanner;
+import org.reflections8.scanners.TypeAnnotationsScanner;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 @Slf4j
 @Service
@@ -38,18 +32,28 @@ public class ReflectionResolverService {
     private BeanFactory beanFactory;
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
     private GraphqlSchemaResolver graphqlSchemaResolver;
 
-    private static final Reflections REFLECTIONS = new Reflections(ReflectionResolverService.class.getClassLoader(),
-            new SubTypesScanner(),
-            new TypeAnnotationsScanner(),
-            new FieldAnnotationsScanner());
+    private static Reflections REFLECTIONS = null;
+
+    @PostConstruct
+    private void init() {
+        try {
+            REFLECTIONS = new Reflections(Thread.currentThread().getContextClassLoader(),
+                    new FieldAnnotationsScanner(),
+                    new TypeAnnotationsScanner(),
+                    new SubTypesScanner());
+        } catch (final Exception e) {
+            log.error("Error in post construct", e);
+        }
+    }
 
     public Set<Class<?>> getBeansWithDataFetcherAnnotations() {
         return REFLECTIONS.getTypesAnnotatedWith(DataFetcherQL.class);
+    }
+
+    public Set<Class<?>> getBeansWithGQLAnnotation() {
+        return REFLECTIONS.getTypesAnnotatedWith(GQL.class);
     }
 
     public Set<DataFetcherBean> getDataFetcherBeans(Set<Class<?>> dataFetcherAnnotations) {
