@@ -11,9 +11,9 @@
     </parent>
     <distributionManagement>
         <repository>
-            <id>repsy</id>
+            <id>github</id>
             <name>Additional GraphQL Extensions</name>
-            <url>https://repo.repsy.io/mvn/jmigac/graphql-annotations</url>
+            <url>https://maven.pkg.github.com/jmigac/additional-graphql-extensions</url>
         </repository>
     </distributionManagement>
     <groupId>com.juricamigac</groupId>
