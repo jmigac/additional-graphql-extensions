@@ -30,20 +30,24 @@ public class DataFetcherPostProcessor {
 
     @PostConstruct
     private void init() {
-        RuntimeWiring RUNTIME_WIRING = RuntimeWiring.MOCKED_WIRING;
-        final Set<Class<?>> dataFetcherAnnotation = this.reflectionResolverService.getBeansWithDataFetcherAnnotations();
-        final Set<DataFetcherBean> dataFetcherBeans = this.reflectionResolverService.getDataFetcherBeans(dataFetcherAnnotation);
-        final Set<Field> runtimeWiringFields = this.reflectionResolverService.getFieldsAnnotatedWithRuntimeWiring();
-        final Set<Field> graphQlObjects = this.reflectionResolverService.getFieldsAnnotatedWithGraphQlObject();
-        if (!dataFetcherBeans.isEmpty()) {
-            RuntimeWiring.Builder runtimeBuilder = RuntimeWiring.newRuntimeWiring();
-            for (DataFetcherBean bean : dataFetcherBeans) {
-                final DataFetcher dt = Optional.of((DataFetcher) beanFactory.getBean(bean.getDataFetcherClass())).orElse(null);
-                runtimeBuilder.type(this.getCapitalizedGraphQLOperation(bean), b -> b.dataFetcher(bean.getDataFetcherAnnotation().operationName(), dt));
+        try {
+            RuntimeWiring RUNTIME_WIRING = RuntimeWiring.MOCKED_WIRING;
+            final Set<Class<?>> dataFetcherAnnotation = this.reflectionResolverService.getBeansWithDataFetcherAnnotations();
+            final Set<DataFetcherBean> dataFetcherBeans = this.reflectionResolverService.getDataFetcherBeans(dataFetcherAnnotation);
+            final Set<Field> runtimeWiringFields = this.reflectionResolverService.getFieldsAnnotatedWithRuntimeWiring();
+            final Set<Field> graphQlObjects = this.reflectionResolverService.getFieldsAnnotatedWithGraphQlObject();
+            if (!dataFetcherBeans.isEmpty()) {
+                RuntimeWiring.Builder runtimeBuilder = RuntimeWiring.newRuntimeWiring();
+                for (DataFetcherBean bean : dataFetcherBeans) {
+                    final DataFetcher dt = Optional.of((DataFetcher) beanFactory.getBean(bean.getDataFetcherClass())).orElse(null);
+                    runtimeBuilder.type(this.getCapitalizedGraphQLOperation(bean), b -> b.dataFetcher(bean.getDataFetcherAnnotation().operationName(), dt));
+                }
+                RUNTIME_WIRING = runtimeBuilder.build();
+                this.reflectionResolverService.setRuntimeWiringToAnnotationFields(runtimeWiringFields, RUNTIME_WIRING);
+                this.reflectionResolverService.setGraphQlObject(graphQlObjects, RUNTIME_WIRING);
             }
-            RUNTIME_WIRING = runtimeBuilder.build();
-            this.reflectionResolverService.setRuntimeWiringToAnnotationFields(runtimeWiringFields, RUNTIME_WIRING);
-            this.reflectionResolverService.setGraphQlObject(graphQlObjects, RUNTIME_WIRING);
+        } catch (final Exception e){
+            log.error("Error in post construct", e);
         }
     }
 
