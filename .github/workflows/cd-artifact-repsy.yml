@@ -12,9 +12,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Bintray
-        uses: simontunnat/action-maven-deploy@v1
+      - name: Release to Repsy
+        uses: qcastel/github-actions-maven-release@master
         with:
-          username: ${{ secrets.REPSY_USERNAME }}
-          password: ${{ secrets.REPSY_PASSWORD }}
-          repository: ${{ secrets.REPSY_REPOSITORY }}
+          release-branch-name: "master"
+          maven-repo-server-id: "repsy"
+          maven-repo-server-username: ${{ secrets.REPSY_USERNAME }}
+          maven-repo-server-password: ${{ secrets.REPSY_PASSWORD }}
+          git-release-bot-name: "release-bot"
+          git-release-bot-email: "jurica1.migac@gmail.com"
+          access-token: ${{ secrets.RELEASE_PAT_TOKEN }}
