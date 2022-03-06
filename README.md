@@ -97,3 +97,21 @@ public class AllEarthquakesDataFetcher implements DataFetcher<{RETURN_TYPE}> {
 ```
 4. Optional step: If your project is logging vast number of ReflectionExceptions, it's because the dependency have reported bug, and to disable this, just disable logging for following package
 Inside the `application.properties` add the following line `logging.level.org.reflections8.*=ERROR` 
+
+# Perfomance testing
+
+Time for fetching all of the datafetcher objects, setting up the runtime wiring and setting the graphql object.
+
+| Number of data fetchers | Time to setup DataFetchers  | Time to setup Runtime Wiring | Time to setup GraphQL |
+| --- | --- | --- | --- |
+| 1 | 37ms | 38ms | 163ms |
+| 2 | 53ms | 54ms | 203ms |
+| 5 | 42ms | 44ms | 160ms |
+| 10 | 42ms | 43ms | 162ms |
+| 15 | 41ms | 42ms | 161ms |
+| 20 | 39ms | 40ms | 155ms |
+| 30 | 49ms | 50ms | 179ms |
+
+## Summary of test results
+Following test results show the that the fetching all of the beans with annotation `@DataFetcherQL` takes about in average 40ms, no matter what is the number of them. Runtime Wiring setup about 1ms to make that object with linking all of the queries and data fetchers to one object.
+GraphQL object takes in average more time, about 160ms, because in case using the schema file, it's needed to load a schema file from resource loader and adapt runtime wiring with loaded file.
