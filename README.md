@@ -1,4 +1,12 @@
 # Additional Graphql Extensions
+
+### Project information
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jmigac/additional-graphql-extensions/Java%20CI%20with%20Maven?style=for-the-badge)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/jmigac/additional-graphql-extensions?style=for-the-badge)
+[![GitHub license](https://img.shields.io/github/license/jmigac/additional-graphql-extensions?style=for-the-badge)](https://github.com/jmigac/additional-graphql-extensions/blob/main/LICENSE)
+![Lines of code](https://img.shields.io/tokei/lines/github/jmigac/additional-graphql-extensions?style=for-the-badge)
+
+
 Additional GraphQL Extension created through Java reflection to provide annotation-driven development by providing additional annotations for faster setup of GraphQL objects and easier way of managing DataFetcher objects inside RuntimeWiring object.
 
 ## How to add following project as dependency
