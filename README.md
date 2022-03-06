@@ -18,6 +18,31 @@ Additional GraphQL Extension created through Java reflection to provide annotati
     <version>use the latest version</version>
 </dependency>
 ```
+### How to add github credentials for public packages
+In your `.m2` find `settings.xml`, and add following code blocks to it.
+
+```
+<server>
+    <id>github</id>
+    <username>{GITHUB_USERNAME}</username>
+    <password>{GITHUB_PERSONAL_ACCESS_TOKEN}</password>
+</server>
+```
+For **personal access token** access, only "read packages" is enough so that maven can resolve the dependency.
+
+Under repositories add the following code block for repository specification
+```
+<repository>
+    <id>github</id>
+    <url>https://maven.pkg.github.com/jmigac/additional-graphql-extensions</url>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+    <releases>
+        <enabled>true</enabled>
+  </releases>
+</repository>
+```
 ### Additional dependencies which are required to use the following the extension
 ```
 <dependency>
