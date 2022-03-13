@@ -27,7 +27,7 @@ public class GraphqlRawStringBeanImpl implements GraphqlBean {
 
     @Override
     public Optional<GraphQLSchema> getSchema() {
-        final TypeDefinitionRegistry registar = new SchemaParser().parse(rawSchema);
-        return Optional.of(new SchemaGenerator().makeExecutableSchema(registar, runtimeWiring));
+        final TypeDefinitionRegistry register = new SchemaParser().parse(rawSchema);
+        return Optional.of(new SchemaGenerator().makeExecutableSchema(register, runtimeWiring));
     }
 }

@@ -6,6 +6,7 @@ import com.juricamigac.additionalgraphqlextensions.beans.impl.GraphqlClasspathBe
 import com.juricamigac.additionalgraphqlextensions.beans.impl.GraphqlRawStringBeanImpl;
 import com.juricamigac.additionalgraphqlextensions.enums.GraphqlObjectEnum;
 import graphql.schema.idl.RuntimeWiring;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +25,37 @@ public class GraphqlSchemaResolver {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    public Optional<GraphqlBean> getGraphqlBean(final Field field, final RuntimeWiring runtimeWiring) {
+    /**
+     * Fetch created optional GraphQL bean which contains information about Graphql schema type
+     *
+     * @param field         Field which containts GraphqlObject annotation
+     * @param runtimeWiring Value which will later on be used for setting up RuntimeWiring object and GraphQL object in the end
+     * @return Optional GraphqlBean
+     */
+    public Optional<GraphqlBean> getGraphqlBean(@NonNull final Field field, @NonNull final RuntimeWiring runtimeWiring) {
         final GraphqlObject annotation = field.getAnnotation(GraphqlObject.class);
         if (annotation.schemaType() == GraphqlObjectEnum.RAW_STRING) {
-            return Optional.of(GraphqlRawStringBeanImpl.builder()
-                    .runtimeWiring(runtimeWiring)
-                    .annotation(annotation)
-                    .rawSchema(getSchema(field))
-                    .build());
+            return this.getRawStringSchemaBean(annotation, runtimeWiring, field);
         } else if (annotation.schemaType() == GraphqlObjectEnum.CLASSPATH) {
-            return Optional.of(GraphqlClasspathBeanImpl.builder()
-                    .runtimeWiring(runtimeWiring)
-                    .annotation(annotation)
-                    .schemaFile(getSchemaFile(field))
-                    .build());
+            return this.getClassPathSchemaBean(annotation, runtimeWiring, field);
         }
         return Optional.empty();
+    }
+
+    private Optional<GraphqlBean> getRawStringSchemaBean(final GraphqlObject annotation, final RuntimeWiring runtimeWiring, final Field field) {
+        return Optional.of(GraphqlRawStringBeanImpl.builder()
+                .runtimeWiring(runtimeWiring)
+                .annotation(annotation)
+                .rawSchema(getSchema(field))
+                .build());
+    }
+
+    private Optional<GraphqlBean> getClassPathSchemaBean(final GraphqlObject annotation, final RuntimeWiring runtimeWiring, final Field field) {
+        return Optional.of(GraphqlClasspathBeanImpl.builder()
+                .runtimeWiring(runtimeWiring)
+                .annotation(annotation)
+                .schemaFile(getSchemaFile(field))
+                .build());
     }
 
     private Optional<File> getSchemaFile(final Field field) {

@@ -9,6 +9,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation used to annotated configuration class for GraphQL to enable component scanning of the injected dependency
+ */
+
 @Configuration
 @IndexAnnotated
 @Retention(RetentionPolicy.RUNTIME)
