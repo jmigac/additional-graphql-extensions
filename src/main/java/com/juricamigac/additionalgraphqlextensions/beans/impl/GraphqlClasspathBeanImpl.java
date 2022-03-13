@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Data
 @Builder
-
 public class GraphqlClasspathBeanImpl implements GraphqlBean{
 
     private GraphqlObject annotation;

@@ -18,7 +18,7 @@
     </distributionManagement>
     <groupId>com.juricamigac</groupId>
     <artifactId>additional-graphql-extensions</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <name>additional-graphql-extensions</name>
     <description>Additional GraphQl Annotation Extensions</description>
     <properties>
